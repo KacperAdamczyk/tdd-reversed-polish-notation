@@ -37,6 +37,9 @@ export class Evaluator {
       throw new Error('Expression contains invalid characters');
     }
   }
+  private static throwInvalidError() {
+    throw new Error('Expression is invalid');
+  }
 
   private calculatePostfix(postfix: Item[]) {
     const numbers: number[] = [];
@@ -83,7 +86,7 @@ export class Evaluator {
       if (item === Operator.PAREN_CLOSE) {
         while (true) {
           if (!operators.length) {
-            throw new Error('Expression is invalid');
+            Evaluator.throwInvalidError();
           }
 
           const lastOperator = operators.pop();
@@ -119,7 +122,7 @@ export class Evaluator {
       operators.includes(Operator.PAREN_OPEN) ||
       operators.includes(Operator.PAREN_CLOSE)
     ) {
-      throw new Error('Expression is invalid');
+      Evaluator.throwInvalidError();
     }
 
     while (operators.length) {
