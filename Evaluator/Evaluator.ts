@@ -62,6 +62,24 @@ export class Evaluator {
         return postfix.push(item);
       }
 
+      if (item === Operator.PAREN_OPEN) {
+        return operators.push(item);
+      }
+
+      if (item === Operator.PAREN_CLOSE) {
+        while (operators.length) {
+          const lastOperator = operators.pop();
+
+          if (lastOperator !== Operator.PAREN_OPEN) {
+            postfix.push(lastOperator);
+          } else {
+            break;
+          }
+        }
+
+        return;
+      }
+
       while (operators.length) {
         const lastOperator = operators[operators.length - 1];
 
