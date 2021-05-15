@@ -23,4 +23,13 @@ describe('Evaluator', () => {
       new Error('Expression contains invalid characters'),
     );
   });
+
+  it('should throw an error when expression is invalid', () => {
+    expect(() => evaluator.evaluate('(1 - 2)) + 3')).toThrow(
+      new Error('Expression is invalid'),
+    );
+    expect(() => evaluator.evaluate('((1 - 2) + 3')).toThrow(
+      new Error('Expression is invalid'),
+    );
+  });
 });
