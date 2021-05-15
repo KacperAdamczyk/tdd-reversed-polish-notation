@@ -20,15 +20,22 @@ export class Evaluator {
   evaluate(expression: string): number {
     const groupedExpression = this.groupExpression(expression);
 
+    Evaluator.validateExpression(expression, groupedExpression);
+
+    const postfix = this.convertToPostfix(groupedExpression);
+
+    return this.calculatePostfix(postfix);
+  }
+
+  private static validateExpression(
+    expression: string,
+    groupedExpression: Item[],
+  ) {
     if (
       expression.replace(/\s/g, '').length !== groupedExpression.join('').length
     ) {
       throw new Error('Expression contains invalid characters');
     }
-
-    const postfix = this.convertToPostfix(groupedExpression);
-
-    return this.calculatePostfix(postfix);
   }
 
   private calculatePostfix(postfix: Item[]) {
