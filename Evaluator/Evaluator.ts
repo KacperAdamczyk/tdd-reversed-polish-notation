@@ -19,6 +19,13 @@ function isNumber(item: Item): item is number {
 export class Evaluator {
   evaluate(expression: string): number {
     const groupedExpression = this.groupExpression(expression);
+
+    if (
+      expression.replace(/\s/g, '').length !== groupedExpression.join('').length
+    ) {
+      throw new Error('Expression contains invalid characters');
+    }
+
     const postfix = this.convertToPostfix(groupedExpression);
 
     return this.calculatePostfix(postfix);
@@ -105,9 +112,8 @@ export class Evaluator {
   }
 
   private groupExpression(expression: string) {
-    const groupedExpression: Item[] = expression
-      .match(GROUP_REGEX)
-      .map((item) => {
+    const groupedExpression: Item[] = (expression.match(GROUP_REGEX) ?? []).map(
+      (item) => {
         if (!Number.isNaN(+item)) {
           return +item;
         }
@@ -115,7 +121,8 @@ export class Evaluator {
         if ((Object.values(Operator) as string[]).includes(item)) {
           return item as Operator;
         }
-      });
+      },
+    );
 
     return groupedExpression;
   }
