@@ -17,4 +17,10 @@ describe('Evaluator', () => {
   it('should evaluate expression with parenthesis', () => {
     expect(evaluator.evaluate('(1 - 2) * 3')).toBe(-3);
   });
+
+  it('should throw an error when expression contains invalid characters', () => {
+    expect(() => evaluator.evaluate('1 - 2 + a')).toThrow(
+      new Error('Expression contains invalid characters'),
+    );
+  });
 });
