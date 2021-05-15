@@ -81,7 +81,11 @@ export class Evaluator {
       }
 
       if (item === Operator.PAREN_CLOSE) {
-        while (operators.length) {
+        while (true) {
+          if (!operators.length) {
+            throw new Error('Expression is invalid');
+          }
+
           const lastOperator = operators.pop();
 
           if (lastOperator !== Operator.PAREN_OPEN) {
@@ -110,6 +114,13 @@ export class Evaluator {
 
       operators.push(item);
     });
+
+    if (
+      operators.includes(Operator.PAREN_OPEN) ||
+      operators.includes(Operator.PAREN_CLOSE)
+    ) {
+      throw new Error('Expression is invalid');
+    }
 
     while (operators.length) {
       postfix.push(operators.pop());
