@@ -18,18 +18,43 @@ function isNumber(item: Item): item is number {
 
 export class Evaluator {
   evaluate(expression: string): number {
-    const groupedExpression: Item[] = expression
-      .match(GROUP_REGEX)
-      .map((item) => {
-        if (!Number.isNaN(+item)) {
-          return +item;
-        }
+    const groupedExpression = this.groupExpression(expression);
+    const postfix = this.convertToPostfix(groupedExpression);
 
-        if ((Object.values(Operator) as string[]).includes(item)) {
-          return item as Operator;
-        }
-      });
+    return this.calculatePostfix(postfix);
+  }
 
+  private calculatePostfix(postfix: Item[]) {
+    const numbers: number[] = [];
+    postfix.forEach((item) => {
+      if (isNumber(item)) {
+        return numbers.push(item);
+      }
+
+      const a: number = numbers.pop();
+      const b: number = numbers.pop();
+
+      if (item === Operator.ADD) {
+        return numbers.push(b + a);
+      }
+      if (item === Operator.SUBTRACT) {
+        return numbers.push(b - a);
+      }
+      if (item === Operator.MULTIPLY) {
+        return numbers.push(b * a);
+      }
+      if (item === Operator.DIVIDE) {
+        return numbers.push(b / a);
+      }
+      if (item === Operator.POWER) {
+        return numbers.push(b ** a);
+      }
+    });
+
+    return numbers.pop();
+  }
+
+  private convertToPostfix(groupedExpression: Item[]) {
     const postfix: Item[] = [];
     const operators: Operator[] = [];
     groupedExpression.forEach((item) => {
@@ -58,33 +83,23 @@ export class Evaluator {
       postfix.push(operators.pop());
     }
 
-    const numbers: number[] = [];
-    postfix.forEach((item) => {
-      if (isNumber(item)) {
-        return numbers.push(item);
-      }
+    return postfix;
+  }
 
-      const a: number = numbers.pop();
-      const b: number = numbers.pop();
+  private groupExpression(expression: string) {
+    const groupedExpression: Item[] = expression
+      .match(GROUP_REGEX)
+      .map((item) => {
+        if (!Number.isNaN(+item)) {
+          return +item;
+        }
 
-      if (item === Operator.ADD) {
-        return numbers.push(b + a);
-      }
-      if (item === Operator.SUBTRACT) {
-        return numbers.push(b - a);
-      }
-      if (item === Operator.MULTIPLY) {
-        return numbers.push(b * a);
-      }
-      if (item === Operator.DIVIDE) {
-        return numbers.push(b / a);
-      }
-      if (item === Operator.POWER) {
-        return numbers.push(b ** a);
-      }
-    });
+        if ((Object.values(Operator) as string[]).includes(item)) {
+          return item as Operator;
+        }
+      });
 
-    return numbers.pop();
+    return groupedExpression;
   }
 
   getOperatorPriority(operator: Operator) {
